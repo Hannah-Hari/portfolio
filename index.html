@@ -6,6 +6,7 @@
     <title>robsansom | Full-Service Creative Partner for Fast Moving Teams</title>
     <meta name="description" content="Work closely with our team of senior designers, strategists, and copywriters. Get full-service creative with full-service care. We collaborate closely. We help craft strategy and story. We become an extension of your team.">
     <link rel="stylesheet" href="css/styles.css?v=1.8.7">
+    <link rel="stylesheet" href="css/snap-scroll.css?v=1.0.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="css/components/cta-button.css">
 </head>
@@ -23,10 +24,10 @@
         </div>
     </header>
 
-    <main>
+    <main class="snap-container">
         <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
+        <section class="snap-section hero" id="hero">
+            <div class="container content">
                 <h1>
                     <span class="hero-title-dark">Products. Interfaces. Systems.</span>
                     <span class="hero-title-light">Designed for impact.</span>
@@ -45,8 +46,8 @@
         </section>
 
         <!-- Portfolio Grid -->
-        <section class="portfolio" id="work">
-            <div class="container">
+        <section class="snap-section portfolio" id="work">
+            <div class="container content">
                 <div class="portfolio-grid">
                     <div class="portfolio-item">
                         <a href="work/lseg.html" class="project-link">
@@ -173,8 +174,8 @@
         </section>
 
         <!-- Testimonials Section -->
-        <section class="testimonials" id="testimonials">
-            <div class="container">
+        <section class="snap-section testimonials" id="testimonials">
+            <div class="container content">
                 <h1>Reputation is everything.</h1>
                 <div class="testimonials-container">
                     <div class="testimonials-track">
@@ -257,9 +258,9 @@
             </div>
         </section>
 
-        <!-- Project CTA Section -->
-        <section class="project-cta" id="project-cta">
-            <div class="container">
+        <!-- Project CTA -->
+        <section class="snap-section project-cta" id="project-cta">
+            <div class="container content">
                 <h1>Interested in working together?</h1>
                 <p>Let's discuss your project and see how I can help.</p>
                 <div class="cta-buttons">
@@ -272,6 +273,8 @@
             </div>
         </section>
     </main>
+
+    <div class="scroll-indicators"></div>
 
     <footer class="footer">
         <div class="container">
@@ -305,6 +308,7 @@
 
     <script src="js/components/cta-button.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/snap-scroll.js"></script>
 </body>
 </html>
 

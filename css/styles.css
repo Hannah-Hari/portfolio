@@ -20,6 +20,17 @@
     --container-padding-mobile: 15px;
     --container-max-width: 1280px;
     --container-width: 100%;
+    
+    /* Transition variables */
+    --transition-fast: 0.3s ease;
+    --transition-medium: 0.5s ease;
+    --transition-slow: 0.8s ease;
+    
+    /* Z-index layers */
+    --z-index-base: 1;
+    --z-index-header: 100;
+    --z-index-modal: 1000;
+    --z-index-highest: 9999;
 }
 
 * {
@@ -31,6 +42,7 @@
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 0;
+    height: 100%;
 }
 
 body {
@@ -41,6 +53,26 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+    position: relative;
+}
+
+/* Header adjustments for snap scrolling */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 0;
+    z-index: var(--z-index-header);
+    background-color: rgba(242, 242, 242, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: transform var(--transition-medium);
+}
+
+.header.hidden {
+    transform: translateY(-100%);
 }
 
 /* Base container standardization */
@@ -52,19 +84,11 @@ body {
 }
 
 /* Header and nav specific styles */
-.header {
-    padding: 30px 0;
-    position: relative;
-    background-color: var(--background-light);
-    z-index: 1000;
-    border-bottom: none;
-}
-
 .header .container {
     width: 90%;
     max-width: 1044px;
     margin: 0 auto;
-    padding: 0;
+    padding: 0 15px;
 }
 
 /* Hero section alignment */
