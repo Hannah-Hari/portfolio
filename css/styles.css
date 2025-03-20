@@ -62,13 +62,13 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    padding: 30px 0;
-    z-index: var(--z-index-header);
-    background-color: rgba(242, 242, 242, 0.9);
+    right: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    transition: transform var(--transition-medium);
+    transition: transform 0.3s ease;
+    height: var(--header-height, 80px);
 }
 
 .header.hidden {
@@ -428,35 +428,21 @@ section {
 
 .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-    width: 100%;
-    margin: 60px 0 0 0;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px;
+    margin-top: 40px;
 }
 
-@media (min-width: 768px) {
-    .portfolio-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 32px;
-    }
-}
-
-@media (min-width: 992px) {
-    .portfolio-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 32px;
-    }
-}
-
+/* Portfolio items show/hide behavior */
 .portfolio-item {
-    position: relative;
-    margin-bottom: 30px;
-    overflow: visible;
-    box-shadow: none;
-    border-radius: 0;
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateY(0);
+}
+
+.portfolio-item.hidden {
+    display: none;
 }
 
 .portfolio-image {
@@ -584,88 +570,65 @@ section {
 
 .testimonials-track {
     display: flex;
-    gap: 24px; /* Reduced from 40px to show more of next card */
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    padding-left: 0;
-    padding-right: calc(50vw - 50%);
-    margin: 0;
-    position: relative;
-}
-
-.testimonials-track::-webkit-scrollbar {
-    display: none;
+    gap: 24px;
+    transition: transform 0.5s ease;
 }
 
 .testimonial-navigation {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-top: 40px;
-    padding: 0;
-    width: 90% !important;
-    max-width: 1044px;
-    margin-left: calc(auto - 50px);
-    margin-right: auto;
-    position: relative;
+    gap: 16px;
+    margin-top: 24px;
+    justify-content: center;
 }
 
 .testimonial-button {
-    position: relative;
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: var(--primary-color);
-    border: none;
-    color: var(--secondary-color);
-    cursor: pointer;
+    background-color: var(--background-light);
+    border: 2px solid var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    padding: 0;
+}
+
+.testimonial-button:hover {
+    background-color: var(--primary-color);
 }
 
 .testimonial-button img {
     width: 24px;
     height: 24px;
-    position: relative;
-    filter: invert(1);
+    transition: filter 0.3s ease;
 }
 
-.testimonial-button.prev {
-    margin-right: 0;
-}
-
-.testimonial-button.next {
-    margin-left: 16px;
-}
-
-.testimonial-button:hover {
-    transform: scale(1.05);
-}
-
-.testimonial-button:disabled {
-    opacity: 0.15;
-    cursor: not-allowed;
-    box-shadow: none;
+.testimonial-button:hover img {
+    filter: brightness(5);
 }
 
 .testimonial-card {
-    flex: 0 0 400px;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    background: var(--secondary-color);
-    border-radius: 20px; /* Match project thumbnails */
-    padding: 40px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Match project thumbnails shadow */
+    min-width: 100%;
+    flex: 0 0 100%;
+    border-radius: 20px;
+    background-color: var(--background-light);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .testimonial-card {
+        min-width: calc(50% - 12px);
+        flex: 0 0 calc(50% - 12px);
+    }
+}
+
+@media (min-width: 1200px) {
+    .testimonial-card {
+        min-width: calc(33.333% - 16px);
+        flex: 0 0 calc(33.333% - 16px);
+    }
 }
 
 .testimonial-content {
@@ -1049,6 +1012,8 @@ section {
     padding: 60px 0;
     background-color: var(--background-light);
     border-top: 1px solid var(--border-color);
+    position: relative;
+    z-index: 10;
 }
 
 .footer-content {
@@ -1104,8 +1069,7 @@ section {
 
 /* Adjust section paddings to account for fixed header */
 .snap-section {
-    padding-top: 120px;
-    padding-bottom: 80px;
+    padding-top: var(--header-height, 80px);
 }
 
 /* Project CTA section improvements */
@@ -1805,68 +1769,38 @@ To use this approach:
 .btn-load-more {
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin: 40px 0;
+    margin-top: 60px;
 }
 
 .btn-load-more .circular-btn {
-    width: 48px;
-    height: 48px;
-    min-width: unset;
-    padding: 0;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    position: relative;
+    background-color: var(--background-light);
+    border: 2px solid var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    border: none;
     cursor: pointer;
+    position: relative;
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .btn-load-more .circular-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
+    background-color: var(--primary-color);
+    color: var(--background-light);
 }
 
 .btn-load-more .circular-btn svg {
     width: 24px;
     height: 24px;
-    position: relative;
-    z-index: 2;
+    stroke: var(--primary-color);
+    transition: stroke 0.3s ease;
 }
 
-.btn-load-more .cta-pulse-dot.is-large {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: transparent;
-    margin: 0;
-}
-
-.btn-load-more .cta-pulse {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    animation: pulse 1.4s infinite;
-    opacity: 0.2;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 0.2;
-    }
-    100% {
-        transform: scale(1.5);
-        opacity: 0;
-    }
+.btn-load-more .circular-btn:hover svg {
+    stroke: var(--background-light);
 }
 
 /* Company Logos Section */

@@ -31,6 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set active section
     let activeIndex = 0;
     
+    // Calculate header height dynamically
+    const headerHeight = document.querySelector('.header').offsetHeight;
+    document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+    
     // Update active section and indicators
     const updateActiveSection = (index) => {
         // Ensure index is within bounds
@@ -40,8 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update active index
         activeIndex = index;
         
-        // Scroll to section
-        sections[index].scrollIntoView({ behavior: 'smooth' });
+        // Get section's position
+        const section = sections[index];
+        const sectionRect = section.getBoundingClientRect();
+        const offsetTop = window.pageYOffset + sectionRect.top - headerHeight;
+        
+        // Scroll to section with precise offset
+        window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+        });
         
         // Update indicators
         indicators.forEach((indicator, i) => {
@@ -80,39 +92,87 @@ document.addEventListener('DOMContentLoaded', () => {
         firstContent.classList.add('visible');
     }
     
-    // Scroll event handling with debounce
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            // If we've scrolled past the last section to the footer, don't update
-            const lastSectionBottom = sections[sections.length - 1].getBoundingClientRect().bottom;
-            if (lastSectionBottom < 0) return;
+    // Track last scroll time to prevent overlapping animations
+    let lastScrollTime = 0;
+    
+    // More precise scroll detection for snapping
+    const handleScroll = () => {
+        // If we've recently updated, wait before handling another scroll
+        const now = Date.now();
+        if (now - lastScrollTime < 800) return;
+        
+        // If we've scrolled past the last section to the footer, don't update
+        const lastSectionBottom = sections[sections.length - 1].getBoundingClientRect().bottom;
+        if (lastSectionBottom < 0) return;
+        
+        // Find which section is most visible
+        let mostVisibleIndex = 0;
+        let maxVisibility = 0;
+        
+        sections.forEach((section, index) => {
+            const rect = section.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
             
-            // Find which section is most visible
-            let mostVisibleIndex = 0;
-            let maxVisibility = 0;
+            // Calculate how much of the section is visible
+            const visibleTop = Math.max(0, rect.top);
+            const visibleBottom = Math.min(windowHeight, rect.bottom);
+            const visibleHeight = Math.max(0, visibleBottom - visibleTop);
             
-            sections.forEach((section, index) => {
-                const rect = section.getBoundingClientRect();
-                const windowHeight = window.innerHeight;
-                
-                // Calculate how much of the section is visible
-                const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-                const visibility = visibleHeight / section.offsetHeight;
-                
-                if (visibility > maxVisibility) {
-                    maxVisibility = visibility;
-                    mostVisibleIndex = index;
-                }
-            });
+            // Calculate percentage of section visible
+            const visibility = visibleHeight / rect.height;
             
-            // Update if changed
-            if (mostVisibleIndex !== activeIndex) {
-                activeIndex = mostVisibleIndex;
-                updateActiveSection(activeIndex);
+            // Give preference to sections that are near the center of the viewport
+            const centerPosition = (rect.top + rect.bottom) / 2;
+            const distanceFromCenter = Math.abs(centerPosition - (windowHeight / 2));
+            const centerBonus = 1 - (distanceFromCenter / (windowHeight / 2)) * 0.3;
+            
+            const adjustedVisibility = visibility * centerBonus;
+            
+            if (adjustedVisibility > maxVisibility) {
+                maxVisibility = adjustedVisibility;
+                mostVisibleIndex = index;
             }
-        }, 100);
+        });
+        
+        // Update if changed
+        if (mostVisibleIndex !== activeIndex) {
+            activeIndex = mostVisibleIndex;
+            updateActiveSection(activeIndex);
+            lastScrollTime = now;
+        }
+    };
+    
+    // Use both scroll and intersection observer for better precision
+    window.addEventListener('scroll', () => {
+        // Use requestAnimationFrame for better performance
+        requestAnimationFrame(handleScroll);
+    });
+    
+    // Set up intersection observer for backup detection
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: `-${headerHeight}px 0px 0px 0px`
+    };
+    
+    const sectionObserver = new IntersectionObserver((entries) => {
+        // Only process if we haven't recently handled a scroll
+        const now = Date.now();
+        if (now - lastScrollTime < 800) return;
+        
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const sectionIndex = Array.from(sections).indexOf(entry.target);
+                if (sectionIndex !== activeIndex) {
+                    activeIndex = sectionIndex;
+                    updateActiveSection(activeIndex);
+                    lastScrollTime = now;
+                }
+            }
+        });
+    }, observerOptions);
+    
+    sections.forEach(section => {
+        sectionObserver.observe(section);
     });
     
     // Click on indicators
@@ -181,4 +241,48 @@ document.addEventListener('DOMContentLoaded', () => {
         
         e.preventDefault();
     }, { passive: false });
+    
+    // Handle touch events for mobile
+    let touchStartY = 0;
+    let touchEndY = 0;
+    const minSwipeDistance = 50; // Minimum distance required for swipe
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    document.addEventListener('touchend', (e) => {
+        touchEndY = e.changedTouches[0].clientY;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const diffY = touchStartY - touchEndY;
+        
+        // Only respond to significant swipes
+        if (Math.abs(diffY) < minSwipeDistance) return;
+        
+        // If we've scrolled past the last section to the footer, don't prevent scrolling
+        const lastSectionBottom = sections[sections.length - 1].getBoundingClientRect().bottom;
+        if (lastSectionBottom < 0 && diffY > 0) return;
+        
+        // Swipe up (negative diff) moves to next section
+        if (diffY > 0) {
+            updateActiveSection(activeIndex + 1);
+        } 
+        // Swipe down (positive diff) moves to previous section
+        else {
+            updateActiveSection(activeIndex - 1);
+        }
+    }
+    
+    // Update on resize for responsive adjustments
+    window.addEventListener('resize', () => {
+        // Recalculate header height
+        const newHeaderHeight = document.querySelector('.header').offsetHeight;
+        document.documentElement.style.setProperty('--header-height', `${newHeaderHeight}px`);
+        
+        // Update current section position
+        updateActiveSection(activeIndex);
+    });
 }); 

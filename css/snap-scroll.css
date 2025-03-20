@@ -8,6 +8,7 @@
   --scroll-indicator-active: rgba(0, 0, 0, 0.8);
   --scroll-indicator-size: 12px;
   --scroll-transition-duration: 0.5s;
+  --header-height: 80px;
 }
 
 .dark-mode:root {
@@ -22,6 +23,7 @@ html {
   height: 100%;
   overflow-y: auto;
   scrollbar-width: none; /* Firefox */
+  scroll-padding-top: var(--header-height);
 }
 
 html::-webkit-scrollbar {
@@ -52,19 +54,46 @@ body {
 
 /* Individual sections that will snap */
 .snap-section {
-  height: 100vh;
+  min-height: 100vh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  opacity: 0.7;
+  opacity: 0.8;
   transition: opacity 0.5s ease;
+  padding-top: var(--header-height); /* Account for fixed header */
+  padding-bottom: 20px;
+}
+
+/* Ensure content is properly positioned with the header */
+.snap-section .container {
+  padding-top: 20px; /* Additional padding for better spacing */
+  padding-bottom: 40px;
 }
 
 .snap-section.visible {
   opacity: 1;
+}
+
+/* Fix specific sections */
+.snap-section.hero {
+  justify-content: center;
+  padding-top: 100px; /* Slightly more padding for hero */
+}
+
+.snap-section.portfolio {
+  padding-top: var(--header-height);
+  justify-content: flex-start;
+}
+
+.snap-section.services,
+.snap-section.testimonials,
+.snap-section.clients,
+.snap-section.project-cta {
+  padding-top: var(--header-height);
+  justify-content: flex-start;
 }
 
 /* Scroll indicators */
@@ -105,7 +134,7 @@ body {
 /* Content transition animations */
 .snap-section .content {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(20px);
   transition: opacity var(--scroll-transition-duration) ease,
               transform var(--scroll-transition-duration) ease;
 }
@@ -114,30 +143,6 @@ body {
 .snap-section .content.visible {
   opacity: 1;
   transform: translateY(0);
-}
-
-/* Dark mode adjustment */
-@media (prefers-color-scheme: dark) {
-  .scroll-indicator {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-  }
-  
-  .scroll-indicator.active {
-    background-color: rgba(255, 255, 255, 0.9);
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .scroll-indicators {
-    right: 15px;
-  }
-  
-  .scroll-indicator {
-    width: 8px;
-    height: 8px;
-  }
 }
 
 /* Scroll down indicator */
@@ -188,9 +193,41 @@ body {
   }
 }
 
+/* Dark mode adjustment */
+@media (prefers-color-scheme: dark) {
+  .scroll-indicator {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  }
+  
+  .scroll-indicator.active {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .scroll-indicators {
+    right: 15px;
+  }
+  
+  .scroll-indicator {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .snap-section {
+    padding-top: 70px; /* Slightly smaller on mobile */
+  }
+}
+
 /* Media Query for Mobile */
 @media (max-width: 480px) {
   .scroll-down-indicator {
     display: none;
+  }
+  
+  .snap-section {
+    padding-top: 60px;
   }
 } 
