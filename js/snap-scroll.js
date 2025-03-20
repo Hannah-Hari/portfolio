@@ -7,10 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const sections = document.querySelectorAll('.snap-section');
     const container = document.querySelector('.snap-container');
-    const scrollIndicatorsContainer = document.querySelector('.scroll-indicators');
+    let scrollIndicatorsContainer = document.querySelector('.scroll-indicators');
     
+    // If no sections, don't proceed
+    if (!sections.length) return;
+
     // Create scroll indicators if they don't exist
-    if (!scrollIndicatorsContainer && sections.length > 0) {
+    if (!scrollIndicatorsContainer) {
         const indicatorsHTML = `
             <div class="scroll-indicators">
                 ${Array.from(sections).map((_, index) => 
@@ -19,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', indicatorsHTML);
+        scrollIndicatorsContainer = document.querySelector('.scroll-indicators');
     }
     
     // Get indicators after creation
@@ -52,20 +56,39 @@ document.addEventListener('DOMContentLoaded', () => {
         sections.forEach((section, i) => {
             if (i === index) {
                 section.classList.add('visible');
+                // If section has content class, make it visible too
+                const content = section.querySelector('.content');
+                if (content) {
+                    content.classList.add('visible');
+                }
             } else {
                 section.classList.remove('visible');
+                // If section has content class, hide it
+                const content = section.querySelector('.content');
+                if (content) {
+                    content.classList.remove('visible');
+                }
             }
         });
     };
     
     // Initialize first section
     updateActiveSection(0);
+    sections[0].classList.add('visible');
+    const firstContent = sections[0].querySelector('.content');
+    if (firstContent) {
+        firstContent.classList.add('visible');
+    }
     
     // Scroll event handling with debounce
     let scrollTimeout;
     window.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
+            // If we've scrolled past the last section to the footer, don't update
+            const lastSectionBottom = sections[sections.length - 1].getBoundingClientRect().bottom;
+            if (lastSectionBottom < 0) return;
+            
             // Find which section is most visible
             let mostVisibleIndex = 0;
             let maxVisibility = 0;
@@ -121,6 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let isScrolling = false;
     
     window.addEventListener('wheel', (e) => {
+        // If we've scrolled past the last section to the footer, don't prevent scrolling
+        const lastSectionBottom = sections[sections.length - 1].getBoundingClientRect().bottom;
+        if (lastSectionBottom < 0 && e.deltaY > 0) return;
+        
         // Prevent default only when we're handling the scroll
         if (isScrolling) {
             e.preventDefault();
@@ -131,6 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Determine scroll direction
         const direction = e.deltaY > 0 ? 1 : -1;
+        
+        // If scrolling down on the last section, allow normal scrolling to the footer
+        if (direction > 0 && activeIndex === sections.length - 1) {
+            const lastSection = sections[sections.length - 1];
+            const rect = lastSection.getBoundingClientRect();
+            
+            // If we're at the bottom of the last section, allow scrolling to the footer
+            if (rect.bottom <= window.innerHeight + 10) return;
+        }
         
         // Set scrolling flag
         isScrolling = true;
