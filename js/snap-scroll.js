@@ -1,154 +1,148 @@
 /**
- * Snap Scroll Implementation
- * Modern 2025 Portfolio Enhancement
+ * Portfolio Website - Snap Scrolling Implementation
+ * Handles smooth section navigation with keyboard, scroll events and indicators
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Elements
-  const snapContainer = document.querySelector('.snap-container');
-  const snapSections = document.querySelectorAll('.snap-section');
-  const scrollIndicatorsContainer = document.querySelector('.scroll-indicators');
-  
-  if (!snapContainer || !snapSections.length) return;
-  
-  // Create scroll indicators if container exists
-  if (scrollIndicatorsContainer) {
-    // Clear any existing indicators
-    scrollIndicatorsContainer.innerHTML = '';
+    // Elements
+    const sections = document.querySelectorAll('.snap-section');
+    const container = document.querySelector('.snap-container');
+    const scrollIndicatorsContainer = document.querySelector('.scroll-indicators');
     
-    // Create indicators for each section
-    snapSections.forEach((section, index) => {
-      const indicator = document.createElement('div');
-      indicator.classList.add('scroll-indicator');
-      indicator.dataset.index = index;
-      
-      // Set first indicator as active
-      if (index === 0) {
-        indicator.classList.add('active');
-      }
-      
-      // Click handler for indicators
-      indicator.addEventListener('click', () => {
-        section.scrollIntoView({ behavior: 'smooth' });
-      });
-      
-      scrollIndicatorsContainer.appendChild(indicator);
-    });
-  }
-  
-  // Create scroll indicators container if it doesn't exist
-  if (!scrollIndicatorsContainer) {
-    const indicatorsContainer = document.createElement('div');
-    indicatorsContainer.classList.add('scroll-indicators');
+    // Create scroll indicators if they don't exist
+    if (!scrollIndicatorsContainer && sections.length > 0) {
+        const indicatorsHTML = `
+            <div class="scroll-indicators">
+                ${Array.from(sections).map((_, index) => 
+                    `<div class="scroll-indicator" data-index="${index}"></div>`
+                ).join('')}
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', indicatorsHTML);
+    }
     
-    snapSections.forEach((section, index) => {
-      const indicator = document.createElement('div');
-      indicator.classList.add('scroll-indicator');
-      indicator.dataset.index = index;
-      
-      if (index === 0) {
-        indicator.classList.add('active');
-      }
-      
-      indicator.addEventListener('click', () => {
-        section.scrollIntoView({ behavior: 'smooth' });
-      });
-      
-      indicatorsContainer.appendChild(indicator);
-    });
+    // Get indicators after creation
+    const indicators = document.querySelectorAll('.scroll-indicator');
     
-    document.body.appendChild(indicatorsContainer);
-  }
-  
-  // Create scroll down indicator for the first section
-  const firstSection = snapSections[0];
-  if (firstSection) {
-    const scrollDownIndicator = document.createElement('div');
-    scrollDownIndicator.classList.add('scroll-down-indicator');
+    // Set active section
+    let activeIndex = 0;
     
-    const scrollDot = document.createElement('div');
-    scrollDot.classList.add('scroll-down-dot');
-    
-    scrollDownIndicator.appendChild(scrollDot);
-    
-    scrollDownIndicator.addEventListener('click', () => {
-      if (snapSections[1]) {
-        snapSections[1].scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-    
-    firstSection.appendChild(scrollDownIndicator);
-  }
-  
-  // Set first section as active
-  if (snapSections[0]) {
-    snapSections[0].classList.add('active');
-  }
-  
-  // Intersection Observer to track active section
-  const observerOptions = {
-    root: snapContainer,
-    threshold: 0.5,
-    rootMargin: '0px'
-  };
-  
-  const sectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const targetIndex = Array.from(snapSections).indexOf(entry.target);
-      const indicators = document.querySelectorAll('.scroll-indicator');
-      
-      if (entry.isIntersecting) {
-        // Update active section
-        snapSections.forEach(section => section.classList.remove('active'));
-        entry.target.classList.add('active');
+    // Update active section and indicators
+    const updateActiveSection = (index) => {
+        // Ensure index is within bounds
+        if (index < 0) index = 0;
+        if (index >= sections.length) index = sections.length - 1;
         
-        // Update active indicator
-        if (indicators.length) {
-          indicators.forEach(indicator => indicator.classList.remove('active'));
-          if (indicators[targetIndex]) {
-            indicators[targetIndex].classList.add('active');
-          }
-        }
-      }
+        // Update active index
+        activeIndex = index;
+        
+        // Scroll to section
+        sections[index].scrollIntoView({ behavior: 'smooth' });
+        
+        // Update indicators
+        indicators.forEach((indicator, i) => {
+            if (i === index) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
+        });
+        
+        // Add visible class to current section for animations
+        sections.forEach((section, i) => {
+            if (i === index) {
+                section.classList.add('visible');
+            } else {
+                section.classList.remove('visible');
+            }
+        });
+    };
+    
+    // Initialize first section
+    updateActiveSection(0);
+    
+    // Scroll event handling with debounce
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            // Find which section is most visible
+            let mostVisibleIndex = 0;
+            let maxVisibility = 0;
+            
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                
+                // Calculate how much of the section is visible
+                const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+                const visibility = visibleHeight / section.offsetHeight;
+                
+                if (visibility > maxVisibility) {
+                    maxVisibility = visibility;
+                    mostVisibleIndex = index;
+                }
+            });
+            
+            // Update if changed
+            if (mostVisibleIndex !== activeIndex) {
+                activeIndex = mostVisibleIndex;
+                updateActiveSection(activeIndex);
+            }
+        }, 100);
     });
-  }, observerOptions);
-  
-  // Observe all sections
-  snapSections.forEach(section => {
-    sectionObserver.observe(section);
-  });
-  
-  // Handle keyboard navigation
-  document.addEventListener('keydown', (e) => {
-    const activeSection = document.querySelector('.snap-section.active');
-    if (!activeSection) return;
     
-    const currentIndex = Array.from(snapSections).indexOf(activeSection);
-    let targetIndex;
+    // Click on indicators
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            updateActiveSection(index);
+        });
+    });
     
-    // Arrow up or Page up
-    if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-      targetIndex = Math.max(0, currentIndex - 1);
-      e.preventDefault();
-    }
-    // Arrow down or Page down
-    else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-      targetIndex = Math.min(snapSections.length - 1, currentIndex + 1);
-      e.preventDefault();
-    }
-    // Home key
-    else if (e.key === 'Home') {
-      targetIndex = 0;
-      e.preventDefault();
-    }
-    // End key
-    else if (e.key === 'End') {
-      targetIndex = snapSections.length - 1;
-      e.preventDefault();
-    }
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+            updateActiveSection(activeIndex + 1);
+            e.preventDefault();
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            updateActiveSection(activeIndex - 1);
+            e.preventDefault();
+        } else if (e.key === 'Home') {
+            updateActiveSection(0);
+            e.preventDefault();
+        } else if (e.key === 'End') {
+            updateActiveSection(sections.length - 1);
+            e.preventDefault();
+        }
+    });
     
-    if (targetIndex !== undefined && snapSections[targetIndex]) {
-      snapSections[targetIndex].scrollIntoView({ behavior: 'smooth' });
-    }
-  });
+    // Handle wheel events for more control
+    let wheelTimeout;
+    let isScrolling = false;
+    
+    window.addEventListener('wheel', (e) => {
+        // Prevent default only when we're handling the scroll
+        if (isScrolling) {
+            e.preventDefault();
+            return;
+        }
+        
+        clearTimeout(wheelTimeout);
+        
+        // Determine scroll direction
+        const direction = e.deltaY > 0 ? 1 : -1;
+        
+        // Set scrolling flag
+        isScrolling = true;
+        
+        // Update section
+        updateActiveSection(activeIndex + direction);
+        
+        // Prevent multiple scrolls
+        wheelTimeout = setTimeout(() => {
+            isScrolling = false;
+        }, 800); // Adjust timing based on your scroll animation duration
+        
+        e.preventDefault();
+    }, { passive: false });
 }); 

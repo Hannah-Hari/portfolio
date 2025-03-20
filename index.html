@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="css/snap-scroll.css?v=1.0.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="css/components/cta-button.css">
+    <script src="js/main.js"></script>
+    <script src="js/snap-scroll.js"></script>
+    <script src="js/sections.js"></script>
 </head>
 <body>
     <header class="header">
@@ -17,6 +20,7 @@
                 <div class="logo">robsansom</div>
                 <ul class="nav-links">
                     <li><a href="#work">My Work</a></li>
+                    <li><a href="#services">Services</a></li>
                     <li><a href="#testimonials">Testimonials</a></li>
                     <li><a href="#project-cta">Get in Touch</a></li>
                 </ul>
@@ -45,9 +49,61 @@
             </div>
         </section>
 
+        <!-- Services Section -->
+        <section class="snap-section services" id="services">
+            <div class="container content">
+                <h1>How I can help</h1>
+                <div class="services-grid">
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 3C4.34315 3 3 4.34315 3 6V18C3 19.6569 4.34315 21 6 21H18C19.6569 21 21 19.6569 21 18V6C21 4.34315 19.6569 3 18 3H6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>Product Design</h3>
+                        <p>Creating intuitive interfaces and experiences that solve real user problems while meeting business objectives.</p>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 6L12 2L22 6V18L12 22L2 18V6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 22V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 6L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22 6L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>Design Systems</h3>
+                        <p>Building scalable design systems that ensure consistency, efficiency, and quality across digital products.</p>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 8H21M14 12H21M14 16H21M4 8H4.01M4 12H4.01M4 16H4.01M7 8H10M7 12H10M7 16H10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>UX Strategy</h3>
+                        <p>Developing user-centered strategies that align business goals with customer needs through research and testing.</p>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 16L8.586 11.414C8.96106 11.0391 9.46967 10.8284 10 10.8284C10.5303 10.8284 11.0389 11.0391 11.414 11.414L16 16M14 14L15.586 12.414C15.9611 12.0391 16.4697 11.8284 17 11.8284C17.5303 11.8284 18.0389 12.0391 18.414 12.414L20 14M14 8H14.01M6 20H18C19.1046 20 20 19.1046 20 18V6C20 4.89543 19.1046 4 18 4H6C4.89543 4 4 4.89543 4 6V18C4 19.1046 4.89543 20 6 20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>UI Design</h3>
+                        <p>Crafting beautiful, modern interfaces that are visually striking while maintaining functionality and accessibility.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Portfolio Grid -->
         <section class="snap-section portfolio" id="work">
             <div class="container content">
+                <h1>Selected Work</h1>
+                <p class="section-intro">Explore some of my recent projects for global brands and innovative startups.</p>
                 <div class="portfolio-grid">
                     <div class="portfolio-item">
                         <a href="work/lseg.html" class="project-link">
@@ -173,6 +229,35 @@
             </div>
         </section>
 
+        <!-- Clients Section -->
+        <section id="clients" class="clients snap-section">
+            <div class="container">
+                <h1>Trusted By</h1>
+                <div class="logos-container">
+                    <div class="logos-track">
+                        <div class="logo-item">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon">
+                        </div>
+                        <div class="logo-item">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google">
+                        </div>
+                        <div class="logo-item">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft">
+                        </div>
+                        <div class="logo-item">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" alt="Tesla">
+                        </div>
+                        <div class="logo-item">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg" alt="Nike">
+                        </div>
+                        <div class="logo-item">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Logonetflix.png" alt="Netflix">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Testimonials Section -->
         <section class="snap-section testimonials" id="testimonials">
             <div class="container content">
@@ -272,43 +357,31 @@
                 </div>
             </div>
         </section>
+
+        <!-- Footer Section -->
+        <section class="snap-section footer-section" id="footer">
+            <footer class="footer">
+                <div class="container content">
+                    <div class="footer-content">
+                        <div class="footer-logo">robsansom</div>
+                        <div class="footer-nav">
+                            <a href="#work">Work</a>
+                            <a href="#services">Services</a>
+                            <a href="#testimonials">Testimonials</a>
+                            <a href="#project-cta">Contact</a>
+                        </div>
+                    </div>
+                    <div class="footer-copyright">
+                        <p>&copy; 2025 Rob Sansom. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+        </section>
     </main>
 
     <div class="scroll-indicators"></div>
 
-    <footer class="footer">
-        <div class="container">
-            <!-- Company Logos Section -->
-            <div class="logos-container">
-                <div class="logos-track">
-                    <!-- First set of logos -->
-                    <div class="logo-item"><img src="images/client-logos/LSEG.png" alt="LSEG"></div>
-                    <div class="logo-item"><img src="images/client-logos/tcs.png" alt="TCS"></div>
-                    <div class="logo-item"><img src="images/client-logos/FLIR.png" alt="FLIR"></div>
-                    <div class="logo-item"><img src="images/client-logos/telefonica.png" alt="Telefónica"></div>
-                    <div class="logo-item"><img src="images/client-logos/doterra.png" alt="dōTERRA"></div>
-                    <div class="logo-item"><img src="images/client-logos/Lloyds.png" alt="Lloyds Bank"></div>
-                    <div class="logo-item"><img src="images/client-logos/BCG.png" alt="BCG"></div>
-                    <div class="logo-item"><img src="images/client-logos/Monitise.png" alt="Monitise"></div>
-                    <div class="logo-item"><img src="images/client-logos/Apple.png" alt="Apple"></div>
-                    <!-- Duplicate set for seamless scrolling -->
-                    <div class="logo-item"><img src="images/client-logos/LSEG.png" alt="LSEG"></div>
-                    <div class="logo-item"><img src="images/client-logos/tcs.png" alt="TCS"></div>
-                    <div class="logo-item"><img src="images/client-logos/FLIR.png" alt="FLIR"></div>
-                    <div class="logo-item"><img src="images/client-logos/telefonica.png" alt="Telefónica"></div>
-                    <div class="logo-item"><img src="images/client-logos/doterra.png" alt="dōTERRA"></div>
-                    <div class="logo-item"><img src="images/client-logos/Lloyds.png" alt="Lloyds Bank"></div>
-                    <div class="logo-item"><img src="images/client-logos/BCG.png" alt="BCG"></div>
-                    <div class="logo-item"><img src="images/client-logos/Monitise.png" alt="Monitise"></div>
-                    <div class="logo-item"><img src="images/client-logos/Apple.png" alt="Apple"></div>
-                </div>
-                </div>
-        </div>
-    </footer>
-
     <script src="js/components/cta-button.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/snap-scroll.js"></script>
 </body>
 </html>
 

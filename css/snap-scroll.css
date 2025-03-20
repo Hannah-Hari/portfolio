@@ -155,4 +155,119 @@
   .scroll-down-indicator {
     display: none;
   }
+}
+
+/* Snap Scrolling Main Styles */
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    position: relative;
+}
+
+.snap-container {
+    height: 100%;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none; /* Firefox */
+}
+
+.snap-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+.snap-section {
+    height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0.7;
+    transition: opacity 0.5s ease;
+}
+
+.snap-section.visible {
+    opacity: 1;
+}
+
+/* Scroll Indicators */
+.scroll-indicators {
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 990;
+}
+
+.scroll-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 2px solid var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scroll-indicator.active {
+    background-color: var(--primary-color);
+    transform: scale(1.2);
+}
+
+.scroll-indicator:hover {
+    background-color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+/* Animation for sections */
+.snap-section .content {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.snap-section.visible .content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Dark mode adjustment */
+@media (prefers-color-scheme: dark) {
+    .scroll-indicator {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .scroll-indicator.active {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+}
+
+/* Media Query for Mobile */
+@media (max-width: 768px) {
+    .scroll-indicators {
+        right: 15px;
+    }
+    
+    .scroll-indicator {
+        width: 8px;
+        height: 8px;
+    }
 } 
