@@ -3,24 +3,9 @@ set -e
 
 # Simple script to commit changes and deploy to GitHub Pages
 INCLUDE_FILES="*.html css/ js/ images/ components/ work/ scripts/ .nojekyll .safe"
-EXCLUDE_FILES="RESPONSIVE.md git_commit.sh MODERNIZATION.md"
+EXCLUDE_FILES="RESPONSIVE.md git_commit.sh MODERNIZATION.md generate_commit.py"
 
 echo "Starting git commit and deploy..."
-
-# Function to generate AI commit messages using cursor cli
-generate_commit_message() {
-  # Get the diff of staged changes
-  DIFF_OUTPUT=$(git diff --staged)
-  
-  # If cursor CLI is available, use it to generate commit message
-  if command -v cursor &> /dev/null; then
-    COMMIT_MSG=$(echo "$DIFF_OUTPUT" | cursor --cli "Generate a comprehensive git commit message for these changes. Keep it under 100 characters but be specific about what changed." | tr -d '\n')
-    echo "$COMMIT_MSG"
-  else
-    # Fallback if cursor is not available
-    echo "Update site"
-  fi
-}
 
 # Make sure we're on main branch
 if [ "$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then
@@ -30,13 +15,32 @@ fi
 
 # Commit any changes on main if needed
 if [ -n "$(git status --porcelain)" ]; then
-  echo "Changes detected, staging and generating commit message..."
+  echo "Changes detected, staging changes..."
   git add .
   
-  # Generate commit message
-  COMMIT_MSG=$(generate_commit_message)
-  echo "Using commit message: $COMMIT_MSG"
+  # Show git diff summary
+  echo "Changes to be committed:"
+  git diff --staged --stat
   
+  # Try to generate commit message using Python script
+  if [ -f "generate_commit.py" ]; then
+    echo "Generating commit message..."
+    python3 generate_commit.py > /dev/null 2>&1
+    if [ -f "/tmp/git_commit_msg.txt" ]; then
+      COMMIT_MSG=$(cat /tmp/git_commit_msg.txt)
+      rm /tmp/git_commit_msg.txt
+    else
+      COMMIT_MSG="Update site"
+    fi
+  else
+    # Ask for commit message with default if Python script not available
+    echo ""
+    echo "Enter commit message (press Enter to use 'Update site'):"
+    read -r USER_COMMIT_MSG
+    COMMIT_MSG=${USER_COMMIT_MSG:-"Update site"}
+  fi
+  
+  echo "Using commit message: $COMMIT_MSG"
   git commit -m "$COMMIT_MSG"
   git push origin main
   echo "✓ Changes pushed to main"
