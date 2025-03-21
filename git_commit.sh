@@ -7,6 +7,21 @@ EXCLUDE_FILES="RESPONSIVE.md git_commit.sh MODERNIZATION.md"
 
 echo "Starting git commit and deploy..."
 
+# Function to generate AI commit messages using cursor cli
+generate_commit_message() {
+  # Get the diff of staged changes
+  DIFF_OUTPUT=$(git diff --staged)
+  
+  # If cursor CLI is available, use it to generate commit message
+  if command -v cursor &> /dev/null; then
+    COMMIT_MSG=$(echo "$DIFF_OUTPUT" | cursor --cli "Generate a comprehensive git commit message for these changes. Keep it under 100 characters but be specific about what changed." | tr -d '\n')
+    echo "$COMMIT_MSG"
+  else
+    # Fallback if cursor is not available
+    echo "Update site"
+  fi
+}
+
 # Make sure we're on main branch
 if [ "$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then
   echo "Switching to main branch..."
@@ -15,9 +30,14 @@ fi
 
 # Commit any changes on main if needed
 if [ -n "$(git status --porcelain)" ]; then
-  echo "Changes detected, committing to main..."
+  echo "Changes detected, staging and generating commit message..."
   git add .
-  git commit -m "Update site"
+  
+  # Generate commit message
+  COMMIT_MSG=$(generate_commit_message)
+  echo "Using commit message: $COMMIT_MSG"
+  
+  git commit -m "$COMMIT_MSG"
   git push origin main
   echo "✓ Changes pushed to main"
 else
@@ -55,7 +75,8 @@ done
 git add .
 if [ -n "$(git status --porcelain)" ]; then
   echo "Pushing updates to live site..."
-  git commit -m "Deploy site"
+  DEPLOY_MSG="Deploy site: $(date +'%Y-%m-%d %H:%M')"
+  git commit -m "$DEPLOY_MSG"
   git push origin gh-pages
   echo "✓ Live site updated!"
 else
